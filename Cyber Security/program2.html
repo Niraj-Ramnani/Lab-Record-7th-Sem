@@ -1,0 +1,110 @@
+<!-- EXP 4. Implement the Diffie –Hellman key exchange mechanism using HTML and Javascript Consider the end user as Alice and BOB -->
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Diffie-Hellman Key Exchange: Alice and Bob</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 30px;
+        }
+        input {
+            margin: 5px;
+        }
+        .section {
+            border: 1px solid #ccc;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 10px;
+            background-color: #f9f9f9;
+        }
+        .section h3 {
+            margin-top: 0;
+        }
+    </style>
+</head>
+<body>
+
+<h2>🔐 Diffie-Hellman Key Exchange Simulator</h2>
+
+<div class="section">
+    <h3>Public Parameters (Shared):</h3>
+    <label>Prime number (P): <input type="number" id="prime" value="23"></label><br>
+    <label>Primitive root modulo P (G): <input type="number" id="base" value="5"></label>
+</div>
+
+<div class="section">
+    <h3>Alice's Private Key</h3>
+    <label>Private Key (a): <input type="number" id="alicePrivate" value="6"></label><br>
+    <button onclick="generateAlicePublicKey()">Generate Alice's Public Key</button>
+    <p>Alice's Public Key (A): <span id="alicePublic"></span></p>
+</div>
+
+<div class="section">
+    <h3>Bob's Private Key</h3>
+    <label>Private Key (b): <input type="number" id="bobPrivate" value="15"></label><br>
+    <button onclick="generateBobPublicKey()">Generate Bob's Public Key</button>
+    <p>Bob's Public Key (B): <span id="bobPublic"></span></p>
+</div>
+
+<div class="section">
+    <h3>Exchange and Compute Shared Secret</h3>
+    <button onclick="computeSharedSecret()">Compute Shared Secret</button>
+    <p>Shared Secret at Alice's side: <span id="aliceSecret"></span></p>
+    <p>Shared Secret at Bob's side: <span id="bobSecret"></span></p>
+</div>
+
+<script>
+    let alicePublicKey, bobPublicKey;
+
+    function modPow(base, exp, mod) {
+        let result = 1;
+        base = base % mod;
+        while (exp > 0) {
+            if (exp % 2 === 1)
+                result = (result * base) % mod;
+            exp = Math.floor(exp / 2);
+            base = (base * base) % mod;
+        }
+        return result;
+    }
+
+    function generateAlicePublicKey() {
+        const p = parseInt(document.getElementById("prime").value);
+        const g = parseInt(document.getElementById("base").value);
+        const a = parseInt(document.getElementById("alicePrivate").value);
+
+        alicePublicKey = modPow(g, a, p);
+        document.getElementById("alicePublic").innerText = alicePublicKey;
+    }
+
+    function generateBobPublicKey() {
+        const p = parseInt(document.getElementById("prime").value);
+        const g = parseInt(document.getElementById("base").value);
+        const b = parseInt(document.getElementById("bobPrivate").value);
+
+        bobPublicKey = modPow(g, b, p);
+        document.getElementById("bobPublic").innerText = bobPublicKey;
+    }
+
+    function computeSharedSecret() {
+        const p = parseInt(document.getElementById("prime").value);
+        const a = parseInt(document.getElementById("alicePrivate").value);
+        const b = parseInt(document.getElementById("bobPrivate").value);
+
+        if (!alicePublicKey || !bobPublicKey) {
+            alert("Please generate public keys for both Alice and Bob first!");
+            return;
+        }
+
+        const aliceSecret = modPow(bobPublicKey, a, p);
+        const bobSecret = modPow(alicePublicKey, b, p);
+
+        document.getElementById("aliceSecret").innerText = aliceSecret;
+        document.getElementById("bobSecret").innerText = bobSecret;
+    }
+</script>
+
+</body>
+</html>
